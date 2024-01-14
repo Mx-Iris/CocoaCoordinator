@@ -97,7 +97,7 @@ extension Transition {
         }
     }
 
-    public static func route<C: Coordinating>(_ route: C.RouteType, on coordinator: C) -> Self {
+    public static func route<C: Coordinating>(_ route: C.Route, on coordinator: C) -> Self {
         let transition = coordinator.prepareTransition(for: route)
         return Transition(presentables: transition.presentables
         ) { _, _, options, completion in

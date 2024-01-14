@@ -5,24 +5,24 @@ import Foundation
 //
 
 public protocol Router {
-    associatedtype RouteType: Route
-    func contextTrigger(_ route: RouteType, with options: TransitionOptions, completion: ContextPresentationHandler?)
+    associatedtype Route: Routable
+    func contextTrigger(_ route: Route, with options: TransitionOptions, completion: ContextPresentationHandler?)
 }
 
 extension Router {
-    public var strongRouter: StrongRouter<RouteType> {
+    public var strongRouter: StrongRouter<Route> {
         return StrongRouter(self)
     }
 }
 
 extension Router where Self: AnyObject {
-    public var unownedRouter: UnownedRouter<RouteType> {
+    public var unownedRouter: UnownedRouter<Route> {
         return UnownedRouter(self) { $0.strongRouter }
     }
 }
 
 extension Router {
-    public func trigger(_ route: RouteType) {
+    public func trigger(_ route: Route) {
         trigger(route, with: .default, completion: nil)
     }
 
@@ -36,7 +36,7 @@ extension Router {
     ///     - options:
     ///         Transition options for performing the transition, e.g. whether it should be animated.
     ///
-    public func trigger(_ route: RouteType, with options: TransitionOptions) {
+    public func trigger(_ route: Route, with options: TransitionOptions) {
         trigger(route, with: options, completion: nil)
     }
 
@@ -49,7 +49,7 @@ extension Router {
     ///         If present, this completion handler is executed once the transition is completed
     ///         (including animations).
     ///
-    public func trigger(_ route: RouteType, completion: PresentationHandler? = nil) {
+    public func trigger(_ route: Route, completion: PresentationHandler? = nil) {
         trigger(route, with: .default, completion: completion)
     }
 
@@ -63,7 +63,7 @@ extension Router {
     ///         If present, this completion handler is executed once the transition is completed
     ///         (including animations).
     ///
-    public func trigger(_ route: RouteType, with options: TransitionOptions, completion: PresentationHandler?) {
+    public func trigger(_ route: Route, with options: TransitionOptions, completion: PresentationHandler?) {
         contextTrigger(route, with: options) { _ in completion?() }
     }
 }
@@ -76,7 +76,7 @@ extension Router where Self: Presentable {
     /// while maintaining information necessary to fulfill the Router protocol.
     /// The original router will be held strongly.
     ///
-    public var strongRouter: StrongRouter<RouteType> {
+    public var strongRouter: StrongRouter<Route> {
         return StrongRouter(self)
     }
 
@@ -91,7 +91,7 @@ extension Router where Self: Presentable {
     ///     if it is compatible with the given route type,
     ///     otherwise `nil`.
     ///
-    public func router<R: Route>(for route: R) -> StrongRouter<R>? {
+    public func router<R: Routable>(for route: R) -> StrongRouter<R>? {
         return strongRouter as? StrongRouter<R>
     }
 }

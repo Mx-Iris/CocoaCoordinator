@@ -2,6 +2,6 @@
 
 import AppKit
 
-public typealias SceneTransition<V: NSViewController> = Transition<NSWindowController, V>
+public typealias SceneTransition = Transition<NSWindowController, NSViewController>
 
 #endif

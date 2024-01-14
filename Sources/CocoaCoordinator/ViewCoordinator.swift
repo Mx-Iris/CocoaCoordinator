@@ -10,10 +10,10 @@ import AppKit
 ///
 /// `ViewCoordinator` is a base class for custom coordinators with a `UIViewController` as `rootViewController`.
 ///
-open class ViewCoordinator<RouteType: Route, TransitionType: TransitionProtocol>: Coordinator<RouteType, TransitionType>, Presentable where TransitionType.V: NSViewController {
-    public var rootViewController: TransitionType.V
+open class ViewCoordinator<Route: Routable, Transition: TransitionProtocol>: Coordinator<Route, Transition>, Presentable where Transition.V: NSViewController {
+    public var rootViewController: Transition.V
 
-    public init(rootViewController: TransitionType.V, initialRoute: RouteType?) {
+    public init(rootViewController: Transition.V, initialRoute: Route?) {
         self.rootViewController = rootViewController
         super.init(initialRoute: initialRoute)
     }
@@ -21,14 +21,11 @@ open class ViewCoordinator<RouteType: Route, TransitionType: TransitionProtocol>
     public var viewController: NSViewController! {
         return rootViewController
     }
-    
-    open override func performTransition(_ transition: TransitionType, with options: TransitionOptions = .default, completion: PresentationHandler? = nil) {
+
+    open override func performTransition(_ transition: Transition, with options: TransitionOptions = .default, completion: PresentationHandler? = nil) {
         transition.presentables.compactMap { $0 as? (any Coordinating) }.forEach(addChild(_:))
         transition.perform(on: nil, in: rootViewController, with: options) {
             completion?()
-            self.removeChildrenIfNeeded()
         }
     }
-    
-    
 }

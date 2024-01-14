@@ -17,14 +17,14 @@
 /// A RedirectionRouter has a viewController which is used in transitions,
 /// e.g. when you are presenting, pushing, or otherwise displaying it.
 ///
-open class RedirectionRouter<ParentRoute: Route, RouteType: Route>: Router {
+open class RedirectionRouter<ParentRoute: Routable, Route: Routable>: Router {
 
     // MARK: Stored properties
 
     /// A type-erased Router object of the parent router.
     public let parent: UnownedRouter<ParentRoute>
 
-    private let _map: ((RouteType) -> ParentRoute)?
+    private let _map: ((Route) -> ParentRoute)?
 
     // MARK: Computed properties
 
@@ -53,14 +53,14 @@ open class RedirectionRouter<ParentRoute: Route, RouteType: Route>: Router {
     ///         A mapping from this RedirectionRouter's routes to the parent's routes.
     ///
     public init(parent: UnownedRouter<ParentRoute>,
-                map: ((RouteType) -> ParentRoute)?) {
+                map: ((Route) -> ParentRoute)?) {
         self.parent = parent
         self._map = map
     }
 
     // MARK: Methods
 
-    open func contextTrigger(_ route: RouteType,
+    open func contextTrigger(_ route: Route,
                              with options: TransitionOptions,
                              completion: ContextPresentationHandler?) {
         parent.contextTrigger(mapToParentRoute(route), with: options, completion: completion)
@@ -78,7 +78,7 @@ open class RedirectionRouter<ParentRoute: Route, RouteType: Route>: Router {
     /// - Returns:
     ///     The mapped route for the parent router.
     ///
-    open func mapToParentRoute(_ route: RouteType) -> ParentRoute {
+    open func mapToParentRoute(_ route: Route) -> ParentRoute {
         guard let map = self._map else {
             fatalError("Please implement \(#function) or use the `map` closure in the initializer.")
         }

@@ -14,12 +14,12 @@ public protocol Coordinating: Router, TransitionPerformer {
     func removeAllChild()
     func removeFromParent()
     func registerParent(_ coordinator: any Coordinating & AnyObject)
-    func prepareTransition(for route: RouteType) -> TransitionType
+    func prepareTransition(for route: Route) -> Transition
 }
 
 public protocol TransitionPerformer {
     /// The type of transitions that can be executed on the rootViewController.
-    associatedtype TransitionType: TransitionProtocol
+    associatedtype Transition: TransitionProtocol
 
     ///
     /// Perform a transition.
@@ -33,9 +33,5 @@ public protocol TransitionPerformer {
     ///     - options: The options on how to perform the transition, including the option to enable/disable animations.
     ///     - completion: The completion handler called once a transition has finished.
     ///
-    func performTransition(
-        _ transition: TransitionType,
-        with options: TransitionOptions,
-        completion: PresentationHandler?
-    )
+    func performTransition(_ transition: Transition, with options: TransitionOptions, completion: PresentationHandler?)
 }

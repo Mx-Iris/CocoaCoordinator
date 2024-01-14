@@ -11,17 +11,14 @@ import Foundation
 /// `UnownedErased` is a property wrapper to hold objects with an unowned reference when using type-erasure.
 ///
 
-public typealias UnownedRouter<RouteType: Route> = UnownedErased<StrongRouter<RouteType>>
+public typealias UnownedRouter<Route: Routable> = UnownedErased<StrongRouter<Route>>
 
 @propertyWrapper
-public struct UnownedErased<Value> {
+public final class UnownedErased<Value> {
     private var _value: () -> Value
     public var wrappedValue: Value {
         return _value()
     }
-}
-
-extension UnownedErased {
     public init<Erasable: AnyObject>(_ value: Erasable, erase: @escaping (Erasable) -> Value) {
         self._value = UnownedErased.createValueClosure(for: value, erase: erase)
     }
@@ -34,9 +31,9 @@ extension UnownedErased {
 }
 
 extension UnownedErased: Router where Value: Router {
-    public typealias RouteType = Value.RouteType
+    public typealias RouteType = Value.Route
     
-    public func contextTrigger(_ route: Value.RouteType, with options: TransitionOptions, completion: ContextPresentationHandler?) {
+    public func contextTrigger(_ route: Value.Route, with options: TransitionOptions, completion: ContextPresentationHandler?) {
         wrappedValue.contextTrigger(route, with: options, completion: completion)
     }
 }

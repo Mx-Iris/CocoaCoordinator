@@ -7,20 +7,33 @@
 
 import AppKit
 
-open class SceneCoordinator<RouteType: Route, TransitionType: TransitionProtocol>: ViewCoordinator<RouteType, TransitionType> where TransitionType.W: NSWindowController, TransitionType.V: NSViewController {
-    
-    public let windowController: TransitionType.W
-    
-    public init(windowController: TransitionType.W, rootViewController: TransitionType.V, initialRoute: RouteType?) {
+public final class WindowDelegate: NSObject, NSWindowDelegate {
+    public var windowWillClose: () -> Void = {}
+
+    public func windowWillClose(_ notification: Notification) {
+        windowWillClose()
+    }
+}
+
+open class SceneCoordinator<Route: Routable, Transition: TransitionProtocol>: ViewCoordinator<Route, Transition> where Transition.W: NSWindowController, Transition.V: NSViewController {
+    public let windowController: Transition.W
+
+    public let windowDelegate: WindowDelegate
+
+    public init(windowController: Transition.W, rootViewController: Transition.V, initialRoute: Route?) {
         self.windowController = windowController
+        self.windowDelegate = .init()
         super.init(rootViewController: rootViewController, initialRoute: initialRoute)
     }
 
-    open override func performTransition(_ transition: TransitionType, with options: TransitionOptions = .default, completion: PresentationHandler? = nil) {
+    open override func performTransition(_ transition: Transition, with options: TransitionOptions = .default, completion: PresentationHandler? = nil) {
         transition.presentables.compactMap { $0 as? (any Coordinating) }.forEach(addChild(_:))
         transition.perform(on: windowController, in: rootViewController, with: options) {
             completion?()
-            self.removeChildrenIfNeeded()
         }
+    }
+
+    open func setupWindowDelegate() {
+        windowController.window?.delegate = windowDelegate
     }
 }

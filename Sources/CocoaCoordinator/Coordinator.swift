@@ -1,17 +1,17 @@
 import Foundation
 
-open class Coordinator<RouteType: Route, TransitionType: TransitionProtocol>: Coordinating {
+open class Coordinator<Route: Routable, Transition: TransitionProtocol>: Coordinating {
     public private(set) var parent: (any Coordinating)?
     public private(set) var children: [any Coordinating] = []
     public var identifer: String {
         String(describing: Self.self)
     }
 
-    public init(initialRoute: RouteType?) {
+    public init(initialRoute: Route?) {
         initialRoute.map { prepareTransition(for: $0) }.map { performTransition($0) }
     }
 
-    open func prepareTransition(for route: RouteType) -> TransitionType {
+    open func prepareTransition(for route: Route) -> Transition {
         fatalError("Please override the \(#function) method.")
     }
 
@@ -55,7 +55,7 @@ open class Coordinator<RouteType: Route, TransitionType: TransitionProtocol>: Co
         debugPrint("Deinit 📣: \(String(describing: self))")
     }
 
-    open func contextTrigger(_ route: RouteType, with options: TransitionOptions = .default, completion: ContextPresentationHandler? = nil) {
+    open func contextTrigger(_ route: Route, with options: TransitionOptions = .default, completion: ContextPresentationHandler? = nil) {
         let transition = prepareTransition(for: route)
         performTransition(transition, with: options) {
             completion?(transition)
@@ -65,14 +65,12 @@ open class Coordinator<RouteType: Route, TransitionType: TransitionProtocol>: Co
     
     
     
-    open func performTransition(_ transition: TransitionType, with options: TransitionOptions = .default, completion: PresentationHandler? = nil) {
-        transition.presentables.compactMap { $0 as? (any Coordinating) }.forEach(addChild(_:))
+    open func performTransition(_ transition: Transition, with options: TransitionOptions = .default, completion: PresentationHandler? = nil) {
         transition.perform(on: nil, in: nil, with: options) {
             completion?()
-//            self.removeChildrenIfNeeded()
         }
     }
     
-    open func completeTransition(_ route: RouteType) {}
+    open func completeTransition(_ route: Route) {}
 }
 
