@@ -1,10 +1,3 @@
-//
-//  SceneCoordinator.swift
-//
-//
-//  Created by JH on 2024/1/12.
-//
-
 import AppKit
 
 public final class WindowDelegate: NSObject, NSWindowDelegate {

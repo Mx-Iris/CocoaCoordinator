@@ -1,15 +1,5 @@
-//
-//  ViewCoordinator.swift
-//  ModernCoordinator
-//
-//  Created by DucPD on 11/11/2021.
-//
-
 import AppKit
 
-///
-/// `ViewCoordinator` is a base class for custom coordinators with a `UIViewController` as `rootViewController`.
-///
 open class ViewCoordinator<Route: Routable, Transition: TransitionProtocol>: Coordinator<Route, Transition>, Presentable where Transition.V: NSViewController {
     public var rootViewController: Transition.V
 
