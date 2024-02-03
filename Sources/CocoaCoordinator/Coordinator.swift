@@ -11,6 +11,10 @@ open class Coordinator<Route: Routable, Transition: TransitionProtocol>: Coordin
         initialRoute.map { prepareTransition(for: $0) }.map { performTransition($0) }
     }
 
+    public init(initialTranstion: Transition?) {
+        initialTranstion.map { performTransition($0) }
+    }
+    
     open func prepareTransition(for route: Route) -> Transition {
         fatalError("Please override the \(#function) method.")
     }

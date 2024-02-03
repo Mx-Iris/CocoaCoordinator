@@ -18,6 +18,11 @@ open class ViewCoordinator<Route: Routable, Transition: TransitionProtocol>: Coo
         super.init(initialRoute: initialRoute)
     }
 
+    public init(rootViewController: Transition.V, initialTranstion: Transition?) {
+        self.rootViewController = rootViewController
+        super.init(initialTranstion: initialTranstion)
+    }
+    
     public var viewController: NSViewController! {
         return rootViewController
     }

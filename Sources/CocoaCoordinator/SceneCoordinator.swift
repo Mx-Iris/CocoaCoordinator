@@ -26,6 +26,12 @@ open class SceneCoordinator<Route: Routable, Transition: TransitionProtocol>: Vi
         super.init(rootViewController: rootViewController, initialRoute: initialRoute)
     }
 
+    public init(windowController: Transition.W, rootViewController: Transition.V, initialTranstion: Transition?) {
+        self.windowController = windowController
+        self.windowDelegate = .init()
+        super.init(rootViewController: rootViewController, initialTranstion: initialTranstion)
+    }
+    
     open override func performTransition(_ transition: Transition, with options: TransitionOptions = .default, completion: PresentationHandler? = nil) {
         transition.presentables.compactMap { $0 as? (any Coordinating) }.forEach(addChild(_:))
         transition.perform(on: windowController, in: rootViewController, with: options) {
