@@ -97,6 +97,21 @@ extension Transition {
         }
     }
 
+    public static func multiple<C: Collection>(_ transitions: C) -> Self where C.Element == Transition {
+        return Self(presentables: transitions.flatMap { $0.presentables }) { wc, vc, options, completion in
+            guard let firstTransition = transitions.first else {
+                completion?()
+                return
+            }
+            firstTransition.perform(on: wc, in: vc, with: options) {
+                let newTransitions = Array(transitions.dropFirst())
+                Transition
+                    .multiple(newTransitions)
+                    .perform(on: wc, in: vc, with: options, completion: completion)
+            }
+        }
+    }
+    
     public static func route<C: Coordinating>(_ route: C.Route, on coordinator: C) -> Self {
         let transition = coordinator.prepareTransition(for: route)
         return Transition(presentables: transition.presentables
