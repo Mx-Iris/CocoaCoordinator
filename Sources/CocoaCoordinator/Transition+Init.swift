@@ -2,6 +2,34 @@
 
 import AppKit
 
+extension Transition where V: NSSplitViewController {
+    public static func set(_ presentables: [Presentable]) -> Self {
+        Self(presentables: presentables) { windowController, viewController, options, completion in
+            viewController?.splitViewItems.forEach { viewController?.removeSplitViewItem($0) }
+            presentables.forEach { viewController?.addSplitViewItem(NSSplitViewItem(viewController: $0.viewController)) }
+        }
+    }
+    
+    @available(macOS 11, *)
+    public static func set(sidebar: Presentable, content: Presentable, inspector: Presentable) -> Self {
+        Self(presentables: [sidebar, content, inspector]) { windowController, viewController, options, completion in
+            viewController?.splitViewItems.forEach { viewController?.removeSplitViewItem($0) }
+            viewController?.addSplitViewItem(NSSplitViewItem(sidebarWithViewController: sidebar.viewController))
+            viewController?.addSplitViewItem(NSSplitViewItem(contentListWithViewController: content.viewController))
+            viewController?.addSplitViewItem(NSSplitViewItem(inspectorWithViewController: inspector.viewController))
+        }
+    }
+}
+
+extension Transition where V: NSTabViewController {
+    public static func set(_ presentables: [Presentable]) -> Self {
+        Self(presentables: presentables) { windowController, viewController, options, completion in
+            viewController?.tabViewItems.forEach { viewController?.removeTabViewItem($0) }
+            presentables.forEach { viewController?.addTabViewItem(NSTabViewItem(viewController: $0.viewController)) }
+        }
+    }
+}
+
 extension Transition where V: NSViewController {
     public static func presentOnRoot(_ presentable: Presentable, mode: NSViewController.PresentationMode) -> Self {
         Self(presentables: [presentable]) { _, vc, _, completion in
@@ -111,7 +139,7 @@ extension Transition {
             }
         }
     }
-    
+
     public static func route<C: Coordinating>(_ route: C.Route, on coordinator: C) -> Self {
         let transition = coordinator.prepareTransition(for: route)
         return Transition(presentables: transition.presentables
