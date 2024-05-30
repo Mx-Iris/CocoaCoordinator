@@ -4,6 +4,7 @@
 // It requires an object to be able to add, remove its child and can be removed themselves from parent like `removeFromSuperview`.
 //
 
+@MainActor
 public protocol Coordinating: Router, TransitionPerformer {
     var identifer: String { get }
     var parent: (any Coordinating)? { get }
@@ -17,6 +18,7 @@ public protocol Coordinating: Router, TransitionPerformer {
     func prepareTransition(for route: Route) -> Transition
 }
 
+@MainActor
 public protocol TransitionPerformer {
     /// The type of transitions that can be executed on the rootViewController.
     associatedtype Transition: TransitionProtocol

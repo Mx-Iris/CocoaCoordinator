@@ -2,6 +2,7 @@
 
 import AppKit
 
+@MainActor
 public protocol TransitionProtocol: TransitionContext {
     associatedtype W
     associatedtype V

@@ -1,5 +1,6 @@
 import Foundation
 
+@MainActor
 open class Coordinator<Route: Routable, Transition: TransitionProtocol>: Coordinating {
     public private(set) var parent: (any Coordinating)?
     public private(set) var children: [any Coordinating] = []

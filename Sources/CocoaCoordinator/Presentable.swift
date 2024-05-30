@@ -1,5 +1,6 @@
 import AppKit
 
+@MainActor
 public protocol Presentable {
     ///
     /// The viewController of the Presentable.

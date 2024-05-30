@@ -5,13 +5,21 @@ import CocoaCoordinator
 extension Reactive where Base: Router & AnyObject {
     public func trigger<Route: Routable>() -> Binder<Route> where Route == Base.Route {
         .init(base) { router, route in
-            router.trigger(route)
+            Task {
+                await MainActor.run {
+                    router.trigger(route)
+                }
+            }
         }
     }
     
     public func trigger<Route: Routable>(_ route: Route) -> Binder<Void> where Route == Base.Route {
         .init(base) { router, _ in
-            router.trigger(route)
+            Task {
+                await MainActor.run {
+                    router.trigger(route)
+                }
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 import AppKit
 
+@MainActor
 open class ViewCoordinator<Route: Routable, Transition: TransitionProtocol>: Coordinator<Route, Transition>, Presentable where Transition.V: NSViewController {
     public var rootViewController: Transition.V
 

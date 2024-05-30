@@ -8,6 +8,7 @@ public final class WindowDelegate: NSObject, NSWindowDelegate {
     }
 }
 
+@MainActor
 open class SceneCoordinator<Route: Routable, Transition: TransitionProtocol>: ViewCoordinator<Route, Transition> where Transition.W: NSWindowController, Transition.V: NSViewController {
     public let windowController: Transition.W
 
