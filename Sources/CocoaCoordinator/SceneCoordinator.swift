@@ -9,26 +9,26 @@ public final class WindowDelegate: NSObject, NSWindowDelegate {
 }
 
 @MainActor
-open class SceneCoordinator<Route: Routable, Transition: TransitionProtocol>: ViewCoordinator<Route, Transition> where Transition.W: NSWindowController, Transition.V: NSViewController {
+open class SceneCoordinator<Route: Routable, Transition: TransitionProtocol>: Coordinator<Route, Transition> where Transition.W: NSWindowController, Transition.V: NSViewController {
     public let windowController: Transition.W
 
     public let windowDelegate: WindowDelegate
 
-    public init(windowController: Transition.W, rootViewController: Transition.V, initialRoute: Route?) {
+    public init(windowController: Transition.W, initialRoute: Route?) {
         self.windowController = windowController
         self.windowDelegate = .init()
-        super.init(rootViewController: rootViewController, initialRoute: initialRoute)
+        super.init(initialRoute: initialRoute)
     }
 
-    public init(windowController: Transition.W, rootViewController: Transition.V, initialTranstion: Transition?) {
+    public init(windowController: Transition.W, initialTranstion: Transition?) {
         self.windowController = windowController
         self.windowDelegate = .init()
-        super.init(rootViewController: rootViewController, initialTranstion: initialTranstion)
+        super.init(initialTranstion: initialTranstion)
     }
     
     open override func performTransition(_ transition: Transition, with options: TransitionOptions = .default, completion: PresentationHandler? = nil) {
         transition.presentables.compactMap { $0 as? (any Coordinating) }.forEach(addChild(_:))
-        transition.perform(on: windowController, in: rootViewController, with: options) {
+        transition.perform(on: windowController, in: windowController.contentViewController as? Transition.V, with: options) {
             completion?()
         }
     }

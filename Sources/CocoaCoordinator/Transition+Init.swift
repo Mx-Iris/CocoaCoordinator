@@ -5,18 +5,28 @@ import AppKit
 extension Transition where V: NSSplitViewController {
     public static func set(_ presentables: [Presentable]) -> Self {
         Self(presentables: presentables) { windowController, viewController, options, completion in
-            viewController?.splitViewItems.forEach { viewController?.removeSplitViewItem($0) }
-            presentables.forEach { viewController?.addSplitViewItem(NSSplitViewItem(viewController: $0.viewController)) }
+            guard let splitViewController = viewController ?? ((windowController as? NSWindowController)?.contentViewController as? V) else {
+                completion?()
+                return
+            }
+            splitViewController.splitViewItems.forEach { splitViewController.removeSplitViewItem($0) }
+            presentables.forEach { splitViewController.addSplitViewItem(NSSplitViewItem(viewController: $0.viewController)) }
+            completion?()
         }
     }
     
     @available(macOS 11, *)
     public static func set(sidebar: Presentable, content: Presentable, inspector: Presentable) -> Self {
         Self(presentables: [sidebar, content, inspector]) { windowController, viewController, options, completion in
-            viewController?.splitViewItems.forEach { viewController?.removeSplitViewItem($0) }
-            viewController?.addSplitViewItem(NSSplitViewItem(sidebarWithViewController: sidebar.viewController))
-            viewController?.addSplitViewItem(NSSplitViewItem(contentListWithViewController: content.viewController))
-            viewController?.addSplitViewItem(NSSplitViewItem(inspectorWithViewController: inspector.viewController))
+            guard let splitViewController = viewController ?? ((windowController as? NSWindowController)?.contentViewController as? V) else {
+                completion?()
+                return
+            }
+            splitViewController.splitViewItems.forEach { splitViewController.removeSplitViewItem($0) }
+            splitViewController.addSplitViewItem(NSSplitViewItem(sidebarWithViewController: sidebar.viewController))
+            splitViewController.addSplitViewItem(NSSplitViewItem(contentListWithViewController: content.viewController))
+            splitViewController.addSplitViewItem(NSSplitViewItem(inspectorWithViewController: inspector.viewController))
+            completion?()
         }
     }
 }
@@ -24,8 +34,13 @@ extension Transition where V: NSSplitViewController {
 extension Transition where V: NSTabViewController {
     public static func set(_ presentables: [Presentable]) -> Self {
         Self(presentables: presentables) { windowController, viewController, options, completion in
-            viewController?.tabViewItems.forEach { viewController?.removeTabViewItem($0) }
-            presentables.forEach { viewController?.addTabViewItem(NSTabViewItem(viewController: $0.viewController)) }
+            guard let viewController = viewController ?? ((windowController as? NSWindowController)?.contentViewController as? V) else {
+                completion?()
+                return
+            }
+            viewController.tabViewItems.forEach { viewController.removeTabViewItem($0) }
+            presentables.forEach { viewController.addTabViewItem(NSTabViewItem(viewController: $0.viewController)) }
+            completion?()
         }
     }
 }
