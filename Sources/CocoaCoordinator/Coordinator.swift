@@ -3,7 +3,9 @@ import Foundation
 @MainActor
 open class Coordinator<Route: Routable, Transition: TransitionProtocol>: Coordinating {
     public private(set) var parent: (any Coordinating)?
+
     public private(set) var children: [any Coordinating] = []
+
     public var identifer: String {
         String(describing: Self.self)
     }
@@ -14,10 +16,6 @@ open class Coordinator<Route: Routable, Transition: TransitionProtocol>: Coordin
 
     public init(initialTranstion: Transition?) {
         initialTranstion.map { performTransition($0) }
-    }
-    
-    open func prepareTransition(for route: Route) -> Transition {
-        fatalError("Please override the \(#function) method.")
     }
 
     public func removeFromParent() {
@@ -51,11 +49,11 @@ open class Coordinator<Route: Routable, Transition: TransitionProtocol>: Coordin
         children.forEach { $0.removeAllChild() }
         children.removeAll()
     }
-    
+
     public func removeChildrenIfNeeded() {
         children.removeAll { $0.canBeRemovedAsChild() }
     }
-    
+
     deinit {
         debugPrint("Deinit 📣: \(String(describing: self))")
     }
@@ -67,15 +65,16 @@ open class Coordinator<Route: Routable, Transition: TransitionProtocol>: Coordin
             self.completeTransition(route)
         }
     }
-    
-    
-    
+
+    open func prepareTransition(for route: Route) -> Transition {
+        fatalError("Please override the \(#function) method.")
+    }
+
     open func performTransition(_ transition: Transition, with options: TransitionOptions = .default, completion: PresentationHandler? = nil) {
         transition.perform(on: nil, in: nil, with: options) {
             completion?()
         }
     }
-    
+
     open func completeTransition(_ route: Route) {}
 }
-
