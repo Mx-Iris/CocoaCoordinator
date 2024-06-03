@@ -7,7 +7,6 @@ let package = Package(
     name: "CocoaCoordinator",
     platforms: [.macOS(.v11)],
     products: [
-        // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
             name: "CocoaCoordinator",
             targets: ["CocoaCoordinator"]
@@ -15,6 +14,10 @@ let package = Package(
         .library(
             name: "RxCocoaCoordinator",
             targets: ["RxCocoaCoordinator"]
+        ),
+        .library(
+            name: "OpenUXKitCoordinator",
+            targets: ["OpenUXKitCoordinator"]
         ),
     ],
     dependencies: [
@@ -42,7 +45,7 @@ let package = Package(
             name: "OpenUXKitCoordinator",
             dependencies: [
                 "CocoaCoordinator",
-                .product(name: "OpenUXKit", package: "OpenUXKit")
+                .product(name: "OpenUXKit", package: "OpenUXKit"),
             ]
         ),
     ]
