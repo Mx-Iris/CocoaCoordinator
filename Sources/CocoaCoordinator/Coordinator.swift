@@ -12,6 +12,7 @@ open class Coordinator<Route: Routable, Transition: TransitionProtocol>: Coordin
 
     public init(initialRoute: Route?) {
         initialRoute.map { prepareTransition(for: $0) }.map { performTransition($0) }
+        initialRoute.map { completeTransition($0) }
     }
 
     public init(initialTranstion: Transition?) {
