@@ -16,6 +16,7 @@ public protocol Coordinating: Router, TransitionPerformer {
     func removeFromParent()
     func registerParent(_ coordinator: any Coordinating & AnyObject)
     func prepareTransition(for route: Route) -> Transition
+    func completeTransition(for route: Route)
 }
 
 @MainActor

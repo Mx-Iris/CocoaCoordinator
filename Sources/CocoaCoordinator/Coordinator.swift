@@ -12,7 +12,7 @@ open class Coordinator<Route: Routable, Transition: TransitionProtocol>: Coordin
 
     public init(initialRoute: Route?) {
         initialRoute.map { prepareTransition(for: $0) }.map { performTransition($0) }
-        initialRoute.map { completeTransition($0) }
+        initialRoute.map { completeTransition(for: $0) }
     }
 
     public init(initialTranstion: Transition?) {
@@ -63,7 +63,7 @@ open class Coordinator<Route: Routable, Transition: TransitionProtocol>: Coordin
         let transition = prepareTransition(for: route)
         performTransition(transition, with: options) {
             completion?(transition)
-            self.completeTransition(route)
+            self.completeTransition(for: route)
         }
     }
 
@@ -77,5 +77,5 @@ open class Coordinator<Route: Routable, Transition: TransitionProtocol>: Coordin
         }
     }
 
-    open func completeTransition(_ route: Route) {}
+    open func completeTransition(for route: Route) {}
 }

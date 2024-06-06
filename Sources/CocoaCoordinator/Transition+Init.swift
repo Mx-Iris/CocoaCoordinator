@@ -160,6 +160,7 @@ extension Transition {
         return Transition(presentables: transition.presentables
         ) { _, _, options, completion in
             coordinator.performTransition(transition, with: options, completion: completion)
+            coordinator.completeTransition(for: route)
         }
     }
     
