@@ -162,6 +162,10 @@ extension Transition {
             coordinator.performTransition(transition, with: options, completion: completion)
         }
     }
+    
+    public static func route<C: Coordinating>(on coordinator: C, to route: C.Route) -> Self {
+        self.route(route, on: coordinator)
+    }
 }
 
 #endif
