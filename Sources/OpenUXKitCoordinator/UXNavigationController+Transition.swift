@@ -6,51 +6,31 @@ import CocoaCoordinator
 
 extension UXNavigationController {
     func push(_ viewController: UXViewController, animated: Bool, completion: (() -> Void)?) {
-        CATransaction.begin()
-        CATransaction.setCompletionBlock(completion)
-        autoreleasepool {
-            pushViewController(viewController, animated: animated)
-        }
-        CATransaction.commit()
+        pushViewController(viewController, animated: animated)
+
+        completion?()
     }
 
     func pop(toRoot: Bool, animated: Bool, completion: PresentationHandler?) {
-        CATransaction.begin()
-        CATransaction.setCompletionBlock(completion)
-
-        autoreleasepool {
-            if toRoot {
-                popToRootViewController(animated: animated)
-            } else {
-                popViewController(animated: animated)
-            }
+        if toRoot {
+            popToRootViewController(animated: animated)
+        } else {
+            popViewController(animated: animated)
         }
 
-        CATransaction.commit()
+        completion?()
     }
 
     func set(_ viewControllers: [UXViewController], animated: Bool, completion: PresentationHandler?) {
-        CATransaction.begin()
-        CATransaction.setCompletionBlock {
-            completion?()
-        }
+        setViewControllers(viewControllers, animated: animated)
 
-        autoreleasepool {
-            setViewControllers(viewControllers, animated: animated)
-        }
-
-        CATransaction.commit()
+        completion?()
     }
 
     func pop(to viewController: UXViewController, animated: Bool, completion: PresentationHandler?) {
-        CATransaction.begin()
-        CATransaction.setCompletionBlock(completion)
+        _ = popToViewController(viewController, animated: animated)
 
-        autoreleasepool {
-            _ = popToViewController(viewController, animated: animated)
-        }
-
-        CATransaction.commit()
+        completion?()
     }
 }
 
