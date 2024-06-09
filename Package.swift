@@ -19,6 +19,10 @@ let package = Package(
             name: "OpenUXKitCoordinator",
             targets: ["OpenUXKitCoordinator"]
         ),
+        .library(
+            name: "UXKitCoordinator",
+            targets: ["UXKitCoordinator"]
+        ),
     ],
     dependencies: [
         .package(
