@@ -1,8 +1,15 @@
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
 
 import AppKit
-import OpenUXKit
 import CocoaCoordinator
+
+#if canImport(OpenUXKit) || canImport(UXKit)
+
+#if canImport(OpenUXKit)
+import OpenUXKit
+#elseif canImport(UXKit)
+import UXKit
+#endif
 
 extension UXNavigationController {
     func push(_ viewController: UXViewController, animated: Bool, completion: (() -> Void)?) {
@@ -33,5 +40,7 @@ extension UXNavigationController {
         completion?()
     }
 }
+
+#endif
 
 #endif

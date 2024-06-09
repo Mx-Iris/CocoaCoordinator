@@ -48,5 +48,12 @@ let package = Package(
                 .product(name: "OpenUXKit", package: "OpenUXKit"),
             ]
         ),
+        .target(
+            name: "UXKitCoordinator",
+            dependencies: [
+                "CocoaCoordinator",
+                .product(name: "UXKit", package: "OpenUXKit"),
+            ]
+        ),
     ]
 )

@@ -2,8 +2,15 @@
 
 import OSLog
 import AppKit
-import OpenUXKit
 import CocoaCoordinator
+
+#if canImport(OpenUXKit) || canImport(UXKit)
+
+#if canImport(OpenUXKit)
+import OpenUXKit
+#elseif canImport(UXKit)
+import UXKit
+#endif
 
 private let logger = Logger(subsystem: "com.JH.OpenUXKitCoordinator", category: "Transition")
 
@@ -69,5 +76,7 @@ extension Transition where V: UXNavigationController {
         }
     }
 }
+
+#endif
 
 #endif
