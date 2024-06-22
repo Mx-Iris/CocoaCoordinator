@@ -24,7 +24,7 @@ open class RedirectionRouter<ParentRoute: Routable, Route: Routable>: Router {
     // MARK: Stored properties
 
     /// A type-erased Router object of the parent router.
-    public let parent: UnownedRouter<ParentRoute>
+    public unowned let parent: any Router<ParentRoute>
 
     private let _map: ((Route) -> ParentRoute)?
 
@@ -54,7 +54,7 @@ open class RedirectionRouter<ParentRoute: Routable, Route: Routable>: Router {
     ///     - map:
     ///         A mapping from this RedirectionRouter's routes to the parent's routes.
     ///
-    public init(parent: UnownedRouter<ParentRoute>,
+    public init(parent: any Router<ParentRoute>,
                 map: ((Route) -> ParentRoute)?) {
         self.parent = parent
         self._map = map

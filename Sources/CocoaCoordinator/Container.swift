@@ -23,17 +23,17 @@ public protocol Container {
     /// - Note:
     ///     It might not exist for a `NSView`.
     ///
-    var viewController: NSViewController! { get }
+    var viewController: NSViewController? { get }
 }
 
 // MARK: - Extensions
 
 extension NSViewController: Container {
-    public var viewController: NSViewController! { return self }
+    public var viewController: NSViewController? { return self }
 }
 
 extension NSView: Container {
-    public var viewController: NSViewController! {
+    public var viewController: NSViewController? {
         return viewController(for: self)
     }
 

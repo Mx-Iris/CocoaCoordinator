@@ -10,11 +10,11 @@ extension Transition where V: NSSplitViewController {
                 return
             }
             splitViewController.splitViewItems.forEach { splitViewController.removeSplitViewItem($0) }
-            presentables.forEach { splitViewController.addSplitViewItem(NSSplitViewItem(viewController: $0.viewController)) }
+            presentables.compactMap { $0.viewController }.forEach { splitViewController.addSplitViewItem(NSSplitViewItem(viewController: $0)) }
             completion?()
         }
     }
-    
+
     @available(macOS 11, *)
     public static func set(sidebar: Presentable, content: Presentable, inspector: Presentable) -> Self {
         Self(presentables: [sidebar, content, inspector]) { windowController, viewController, options, completion in
@@ -23,9 +23,13 @@ extension Transition where V: NSSplitViewController {
                 return
             }
             splitViewController.splitViewItems.forEach { splitViewController.removeSplitViewItem($0) }
-            splitViewController.addSplitViewItem(NSSplitViewItem(sidebarWithViewController: sidebar.viewController))
-            splitViewController.addSplitViewItem(NSSplitViewItem(contentListWithViewController: content.viewController))
-            splitViewController.addSplitViewItem(NSSplitViewItem(inspectorWithViewController: inspector.viewController))
+            guard let sidebarViewController = sidebar.viewController, let contentViewController = content.viewController, let inspectorViewController = inspector.viewController else {
+                completion?()
+                return
+            }
+            splitViewController.addSplitViewItem(NSSplitViewItem(sidebarWithViewController: sidebarViewController))
+            splitViewController.addSplitViewItem(NSSplitViewItem(contentListWithViewController: contentViewController))
+            splitViewController.addSplitViewItem(NSSplitViewItem(inspectorWithViewController: inspectorViewController))
             completion?()
         }
     }
@@ -39,7 +43,7 @@ extension Transition where V: NSTabViewController {
                 return
             }
             viewController.tabViewItems.forEach { viewController.removeTabViewItem($0) }
-            presentables.forEach { viewController.addTabViewItem(NSTabViewItem(viewController: $0.viewController)) }
+            presentables.compactMap { $0.viewController }.forEach { viewController.addTabViewItem(NSTabViewItem(viewController: $0)) }
             completion?()
         }
     }
@@ -97,9 +101,14 @@ extension Transition where W: NSWindowController {
     }
 
     public static func beginSheet(_ presentable: Presentable) -> Self {
-        Self(presentables: [presentable]) { wc, _, _, completion in wc?.window?.beginSheet(NSWindow(contentViewController: presentable.viewController)) { _ in
-            completion?()
-        }
+        Self(presentables: [presentable]) { wc, _, _, completion in
+            if let viewController = presentable.viewController {
+                wc?.window?.beginSheet(NSWindow(contentViewController: viewController)) { _ in
+                    completion?()
+                }
+            } else {
+                completion?()
+            }
         }
     }
 
@@ -115,7 +124,11 @@ extension Transition where W: NSWindowController {
 extension Transition {
     public static func beginModal(_ presentable: Presentable) -> Self {
         Self(presentables: [presentable]) { _, _, _, completion in
-            ModalWindowManager.shared.beginModalSession(for: presentable.viewController)
+            guard let viewController = presentable.viewController else {
+                completion?()
+                return
+            }
+            ModalWindowManager.shared.beginModalSession(for: viewController)
             completion?()
         }
     }
@@ -129,7 +142,11 @@ extension Transition {
 
     public static func popover(_ presentable: Presentable, relativeTo positioningRect: NSRect, of positioningView: NSView, preferredEdge: NSRectEdge) -> Self {
         Self(presentables: [presentable]) { _, _, _, completion in
-            GlobalPopover.shared.show(viewController: presentable.viewController, relativeTo: positioningRect, of: positioningView, preferredEdge: preferredEdge)
+            guard let viewController = presentable.viewController else {
+                completion?()
+                return
+            }
+            GlobalPopover.shared.show(viewController: viewController, relativeTo: positioningRect, of: positioningView, preferredEdge: preferredEdge)
             completion?()
         }
     }
@@ -163,7 +180,7 @@ extension Transition {
             coordinator.completeTransition(for: route)
         }
     }
-    
+
     public static func route<C: Coordinating>(on coordinator: C, to route: C.Route) -> Self {
         self.route(route, on: coordinator)
     }

@@ -4,8 +4,10 @@ import Foundation
 /// `UnownedErased` is a property wrapper to hold objects with an unowned reference when using type-erasure.
 ///
 
+@available(*, deprecated, message: "use unowned let router: any Router<Route>")
 public typealias UnownedRouter<Route: Routable> = UnownedErased<StrongRouter<Route>>
 
+@available(*, deprecated, message: "use unowned let router: any Router<Route>")
 @MainActor
 @propertyWrapper
 public final class UnownedErased<Value> {
@@ -24,6 +26,7 @@ public final class UnownedErased<Value> {
     }
 }
 
+@available(*, deprecated, message: "use unowned let router: any Router<Route>")
 extension UnownedErased: Router where Value: Router {
     public typealias RouteType = Value.Route
     

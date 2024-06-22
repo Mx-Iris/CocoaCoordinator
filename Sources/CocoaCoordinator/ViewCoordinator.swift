@@ -14,7 +14,7 @@ open class ViewCoordinator<Route: Routable, Transition: TransitionProtocol>: Coo
         super.init(initialTranstion: initialTranstion)
     }
     
-    public var viewController: NSViewController! {
+    public var viewController: NSViewController? {
         return rootViewController
     }
 
@@ -23,5 +23,9 @@ open class ViewCoordinator<Route: Routable, Transition: TransitionProtocol>: Coo
         transition.perform(on: nil, in: rootViewController, with: options) {
             completion?()
         }
+    }
+    
+    public func router<R>(for route: R) -> (any Router<R>)? where R : Routable {
+        self as? ViewCoordinator<R, Transition>
     }
 }

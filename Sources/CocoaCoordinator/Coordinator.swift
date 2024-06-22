@@ -1,7 +1,7 @@
 import Foundation
 
 @MainActor
-open class Coordinator<Route: Routable, Transition: TransitionProtocol>: Coordinating {
+open class Coordinator<Route: Routable, Transition: TransitionProtocol>: NSObject, Coordinating {
     public private(set) var parent: (any Coordinating)?
 
     public private(set) var children: [any Coordinating] = []
@@ -11,11 +11,13 @@ open class Coordinator<Route: Routable, Transition: TransitionProtocol>: Coordin
     }
 
     public init(initialRoute: Route?) {
+        super.init()
         initialRoute.map { prepareTransition(for: $0) }.map { performTransition($0) }
         initialRoute.map { completeTransition(for: $0) }
     }
 
     public init(initialTranstion: Transition?) {
+        super.init()
         initialTranstion.map { performTransition($0) }
     }
 

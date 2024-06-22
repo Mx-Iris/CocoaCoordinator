@@ -8,7 +8,7 @@ public protocol Presentable {
     /// In the case of a `UIViewController`, it returns itself.
     /// A coordinator returns its rootViewController.
     ///
-    var viewController: NSViewController! { get }
+    var viewController: NSViewController? { get }
 
     ///
     /// This method can be used to retrieve whether the presentable can trigger a specific route
@@ -19,7 +19,7 @@ public protocol Presentable {
     /// - Parameter route:
     ///     The route to determine a router for.
     ///
-    func router<R: Routable>(for route: R) -> StrongRouter<R>?
+    func router<R: Routable>(for route: R) -> (any Router<R>)?
 
     ///
     /// This method is called whenever a Presentable is shown to the user.
@@ -71,17 +71,25 @@ extension Presentable {
         presented(from: window)
     }
 
-    public func router<R: Routable>(for route: R) -> StrongRouter<R>? {
-        return self as? StrongRouter<R>
-    }
+//    public func router<R: Routable>(for route: R) -> StrongRouter<R>? {
+//        return self as? StrongRouter<R>
+//    }
 
     public func presented(from presentable: Presentable?) {}
 }
 
-extension NSViewController: Presentable {}
+extension NSViewController: Presentable {
+    public func router<R>(for route: R) -> (any Router<R>)? where R : Routable {
+        nil
+    }
+}
 
 extension NSWindow: Presentable {
-    public var viewController: NSViewController! { contentViewController }
+    public var viewController: NSViewController? { contentViewController }
+    
+    public func router<R>(for route: R) -> (any Router<R>)? where R : Routable {
+        nil
+    }
 }
 
 /// The completion handler for transitions.

@@ -5,18 +5,20 @@ import Foundation
 //
 
 @MainActor
-public protocol Router {
+public protocol Router<Route>: AnyObject {
     associatedtype Route: Routable
     func contextTrigger(_ route: Route, with options: TransitionOptions, completion: ContextPresentationHandler?)
 }
 
 extension Router {
+    @available(*, deprecated, message: "use any Router<Route>")
     public var strongRouter: StrongRouter<Route> {
         return StrongRouter(self)
     }
 }
 
-extension Router where Self: AnyObject {
+extension Router {
+    @available(*, deprecated, message: "use unowned let router: any Router<Route>")
     public var unownedRouter: UnownedRouter<Route> {
         return UnownedRouter(self) { $0.strongRouter }
     }
@@ -77,9 +79,9 @@ extension Router where Self: Presentable {
     /// while maintaining information necessary to fulfill the Router protocol.
     /// The original router will be held strongly.
     ///
-    public var strongRouter: StrongRouter<Route> {
-        return StrongRouter(self)
-    }
+//    public var strongRouter: StrongRouter<Route> {
+//        return StrongRouter(self)
+//    }
 
     ///
     /// Returns a router for the specified route, if possible.
@@ -92,7 +94,7 @@ extension Router where Self: Presentable {
     ///     if it is compatible with the given route type,
     ///     otherwise `nil`.
     ///
-    public func router<R: Routable>(for route: R) -> StrongRouter<R>? {
-        return strongRouter as? StrongRouter<R>
-    }
+//    public func router<R: Routable>(for route: R) -> (any Router<R>)? {
+//        return self
+//    }
 }

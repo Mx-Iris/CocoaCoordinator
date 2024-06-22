@@ -19,7 +19,11 @@ extension NSViewController {
         return self
     }
 
-    public func present(onRoot: Bool, _ viewController: NSViewController, mode: PresentationMode, completion: PresentationHandler?) {
+    public func present(onRoot: Bool, _ viewController: NSViewController?, mode: PresentationMode, completion: PresentationHandler?) {
+        guard let viewController else {
+            completion?()
+            return
+        }
         let presentingViewController = onRoot ? self : topPresentedViewController
         switch mode {
         case .asSheet:
