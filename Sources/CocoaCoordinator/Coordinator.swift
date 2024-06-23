@@ -1,6 +1,6 @@
 import Foundation
 
-@MainActor
+
 open class Coordinator<Route: Routable, Transition: TransitionProtocol>: NSObject, Coordinating {
     public private(set) var parent: (any Coordinating)?
 

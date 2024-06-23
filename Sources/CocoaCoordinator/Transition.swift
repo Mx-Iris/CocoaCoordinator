@@ -1,6 +1,5 @@
 import AppKit
 
-@MainActor
 public struct Transition<W, V>: TransitionProtocol {
     public typealias PerformClosure = (
         _ windowController: W?,

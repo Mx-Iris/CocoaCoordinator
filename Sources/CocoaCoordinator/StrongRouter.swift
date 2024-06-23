@@ -5,7 +5,6 @@ import Foundation
 ///
 
 @available(*, deprecated, message: "use any Router<Route>")
-@MainActor
 public final class StrongRouter<Route: Routable>: Router {
     private let _contextTrigger: (Route, TransitionOptions, ContextPresentationHandler?) -> Void
 

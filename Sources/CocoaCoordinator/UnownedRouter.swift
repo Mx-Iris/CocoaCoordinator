@@ -8,7 +8,6 @@ import Foundation
 public typealias UnownedRouter<Route: Routable> = UnownedErased<StrongRouter<Route>>
 
 @available(*, deprecated, message: "use unowned let router: any Router<Route>")
-@MainActor
 @propertyWrapper
 public final class UnownedErased<Value> {
     private var _value: () -> Value

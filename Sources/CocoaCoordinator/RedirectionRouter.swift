@@ -18,7 +18,7 @@
 /// e.g. when you are presenting, pushing, or otherwise displaying it.
 ///
 
-@MainActor
+
 open class RedirectionRouter<ParentRoute: Routable, Route: Routable>: Router {
 
     // MARK: Stored properties
