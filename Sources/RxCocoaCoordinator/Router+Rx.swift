@@ -2,7 +2,7 @@ import RxSwift
 import RxCocoa
 import CocoaCoordinator
 
-public class ReactiveRouter<Route: Routable> {
+public struct ReactiveRouter<Route: Routable> {
     // MARK: Stored Properties
 
     public let base: any Router<Route>
@@ -23,15 +23,27 @@ extension Router {
 }
 
 extension ReactiveRouter {
-    public func trigger() -> Binder<Route> {
-        .init(self) { router, route in
-            router.base.trigger(route)
+    public func trigger() -> AnyObserver<Route> {
+        AnyObserver<Route> { [weak base] event in
+            guard let base else { return }
+            switch event {
+            case let .next(route):
+                base.trigger(route)
+            default:
+                break
+            }
         }
     }
 
-    public func trigger(_ route: Route) -> Binder<Void> {
-        .init(self) { router, _ in
-            router.base.trigger(route)
+    public func trigger(_ route: Route) -> AnyObserver<Void> {
+        AnyObserver<Void> { [weak base] event in
+            guard let base else { return }
+            switch event {
+            case .next:
+                base.trigger(route)
+            default:
+                break
+            }
         }
     }
 }
