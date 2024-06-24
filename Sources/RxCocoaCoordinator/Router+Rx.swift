@@ -25,21 +25,13 @@ extension Router {
 extension ReactiveRouter {
     public func trigger() -> Binder<Route> {
         .init(self) { router, route in
-            Task {
-                await MainActor.run {
-                    router.base.trigger(route)
-                }
-            }
+            router.base.trigger(route)
         }
     }
-    
+
     public func trigger(_ route: Route) -> Binder<Void> {
         .init(self) { router, _ in
-            Task {
-                await MainActor.run {
-                    router.base.trigger(route)
-                }
-            }
+            router.base.trigger(route)
         }
     }
 }
