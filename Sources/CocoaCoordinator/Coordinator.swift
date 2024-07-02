@@ -68,7 +68,6 @@ open class Coordinator<Route: Routable, Transition: TransitionProtocol>: Coordin
             guard let self else { return }
             completion?(transition)
             completeTransition(for: route)
-            didCompleteTransition(route)
         }
     }
 
@@ -77,10 +76,12 @@ open class Coordinator<Route: Routable, Transition: TransitionProtocol>: Coordin
     }
 
     open func performTransition(_ transition: Transition, with options: TransitionOptions = .default, completion: PresentationHandler? = nil) {
-        transition.perform(on: nil, in: nil, with: options) {
+        transition.perform(on: nil, in: nil, with: options) { 
             completion?()
         }
     }
 
-    open func completeTransition(for route: Route) {}
+    open func completeTransition(for route: Route) {
+        didCompleteTransition(route)
+    }
 }

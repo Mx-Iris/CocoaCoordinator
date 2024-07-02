@@ -176,8 +176,10 @@ extension Transition {
         let transition = coordinator.prepareTransition(for: route)
         return Transition(presentables: transition.presentables
         ) { _, _, options, completion in
-            coordinator.performTransition(transition, with: options, completion: completion)
-            coordinator.completeTransition(for: route)
+            coordinator.performTransition(transition, with: options) {
+                completion?()
+                coordinator.completeTransition(for: route)
+            }
         }
     }
 
