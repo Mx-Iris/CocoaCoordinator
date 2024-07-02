@@ -47,3 +47,30 @@ extension ReactiveRouter {
         }
     }
 }
+
+public struct ReactiveCoordinator<Route: Routable, Transition: TransitionProtocol> {
+    public let base: Coordinator<Route, Transition>
+    
+    public init(_ base: Coordinator<Route, Transition>) {
+        self.base = base
+    }
+}
+
+extension Coordinator {
+    public var rx: ReactiveCoordinator<Route, Transition> {
+        ReactiveCoordinator(self)
+    }
+}
+
+extension ReactiveCoordinator {
+    public func didCompleteTransition() -> Observable<Route> {
+        Observable<Route>.create { observer in
+            base.didCompleteTransition = { route in
+                observer.on(.next(route))
+            }
+            return Disposables.create {
+                base.didCompleteTransition = { _ in }
+            }
+        }
+    }
+}

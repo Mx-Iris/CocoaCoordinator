@@ -1,23 +1,24 @@
 import Foundation
 
-
-open class Coordinator<Route: Routable, Transition: TransitionProtocol>: NSObject, Coordinating {
+open class Coordinator<Route: Routable, Transition: TransitionProtocol>: Coordinating {
     public private(set) var parent: (any Coordinating)?
 
     public private(set) var children: [any Coordinating] = []
 
+    package var didCompleteTransition: (Route) -> Void = { _ in }
+    
     public var identifer: String {
         String(describing: Self.self)
     }
 
     public init(initialRoute: Route?) {
-        super.init()
+//        super.init()
         initialRoute.map { prepareTransition(for: $0) }.map { performTransition($0) }
         initialRoute.map { completeTransition(for: $0) }
     }
 
     public init(initialTranstion: Transition?) {
-        super.init()
+//        super.init()
         initialTranstion.map { performTransition($0) }
     }
 
@@ -63,9 +64,11 @@ open class Coordinator<Route: Routable, Transition: TransitionProtocol>: NSObjec
 
     open func contextTrigger(_ route: Route, with options: TransitionOptions = .default, completion: ContextPresentationHandler? = nil) {
         let transition = prepareTransition(for: route)
-        performTransition(transition, with: options) {
+        performTransition(transition, with: options) { [weak self] in
+            guard let self else { return }
             completion?(transition)
-            self.completeTransition(for: route)
+            completeTransition(for: route)
+            didCompleteTransition(route)
         }
     }
 

@@ -4,7 +4,6 @@ import Foundation
 // `Router` is used to abstract the transition-type that can be able to perform route from its `Coordinator`.
 //
 
-
 public protocol Router<Route>: AnyObject {
     associatedtype Route: Routable
     func contextTrigger(_ route: Route, with options: TransitionOptions, completion: ContextPresentationHandler?)
