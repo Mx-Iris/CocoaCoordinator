@@ -1,6 +1,7 @@
 import RxSwift
 import RxCocoa
 import CocoaCoordinator
+import Foundation
 
 public struct ReactiveRouter<Route: Routable> {
     // MARK: Stored Properties
@@ -50,7 +51,7 @@ extension ReactiveRouter {
 
 public struct ReactiveCoordinator<Route: Routable, Transition: TransitionProtocol> {
     public let base: Coordinator<Route, Transition>
-    
+
     public init(_ base: Coordinator<Route, Transition>) {
         self.base = base
     }
@@ -62,15 +63,22 @@ extension Coordinator {
     }
 }
 
+extension Coordinator {
+    fileprivate var _didCompleteTransitionRelay: PublishRelay<Route> {
+        if let relay = objc_getAssociatedObject(self, #function) as? PublishRelay<Route> {
+            return relay
+        }
+        let relay = PublishRelay<Route>()
+        didCompleteTransition = {
+            relay.accept($0)
+        }
+        objc_setAssociatedObject(self, #function, relay, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        return relay
+    }
+}
+
 extension ReactiveCoordinator {
     public func didCompleteTransition() -> Observable<Route> {
-        Observable<Route>.create { observer in
-            base.didCompleteTransition = { route in
-                observer.on(.next(route))
-            }
-            return Disposables.create {
-                base.didCompleteTransition = { _ in }
-            }
-        }
+        base._didCompleteTransitionRelay.asObservable()
     }
 }
