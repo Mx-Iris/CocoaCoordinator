@@ -9,8 +9,7 @@ extension Transition where V: NSSplitViewController {
                 completion?()
                 return
             }
-            splitViewController.splitViewItems.forEach { splitViewController.removeSplitViewItem($0) }
-            presentables.compactMap { $0.viewController }.forEach { splitViewController.addSplitViewItem(NSSplitViewItem(viewController: $0)) }
+            splitViewController.splitViewItems = presentables.compactMap { $0.viewController }.map { NSSplitViewItem(viewController: $0) }
             completion?()
         }
     }
@@ -22,14 +21,16 @@ extension Transition where V: NSSplitViewController {
                 completion?()
                 return
             }
-            splitViewController.splitViewItems.forEach { splitViewController.removeSplitViewItem($0) }
+
             guard let sidebarViewController = sidebar.viewController, let contentViewController = content.viewController, let inspectorViewController = inspector.viewController else {
                 completion?()
                 return
             }
-            splitViewController.addSplitViewItem(NSSplitViewItem(sidebarWithViewController: sidebarViewController))
-            splitViewController.addSplitViewItem(NSSplitViewItem(contentListWithViewController: contentViewController))
-            splitViewController.addSplitViewItem(NSSplitViewItem(inspectorWithViewController: inspectorViewController))
+            splitViewController.splitViewItems = [
+                .init(sidebarWithViewController: sidebarViewController),
+                .init(contentListWithViewController: contentViewController),
+                .init(inspectorWithViewController: inspectorViewController),
+            ]
             completion?()
         }
     }
