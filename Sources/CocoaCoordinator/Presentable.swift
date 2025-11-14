@@ -1,6 +1,5 @@
 import AppKit
 
-
 public protocol Presentable {
     ///
     /// The viewController of the Presentable.
@@ -79,15 +78,15 @@ extension Presentable {
 }
 
 extension NSViewController: Presentable {
-    public func router<R>(for route: R) -> (any Router<R>)? where R : Routable {
+    public func router<R>(for route: R) -> (any Router<R>)? where R: Routable {
         nil
     }
 }
 
 extension NSWindow: Presentable {
     public var viewController: NSViewController? { contentViewController }
-    
-    public func router<R>(for route: R) -> (any Router<R>)? where R : Routable {
+
+    public func router<R>(for route: R) -> (any Router<R>)? where R: Routable {
         nil
     }
 }
@@ -121,22 +120,21 @@ extension NSViewController {
         if isInViewHierarchy(on: NSApplication.shared.keyWindow) {
             return true
         }
-        
+
         if isInViewHierarchy(on: NSApplication.shared.mainWindow) {
             return true
         }
-        
+
         if isInViewHierarchy(on: NSApplication.shared.modalWindow) {
             return true
         }
-        
+
         return presentingViewController != nil
             || presentedViewControllers?.isEmpty == false
             || parent != nil
             || view.window != nil
-        
     }
-    
+
     func isInViewHierarchy(on window: NSWindow?) -> Bool {
         guard let window else { return false }
         return window.contentViewController === self

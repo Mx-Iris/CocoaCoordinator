@@ -31,7 +31,7 @@ let package = Package(
         ),
         .package(
             url: "https://github.com/OpenUXKit/OpenUXKit",
-            from: "0.3.0"
+            branch: "main"
         ),
     ],
     targets: [

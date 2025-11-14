@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/OpenUXKit/OpenUXKit",
       "state" : {
-        "revision" : "6028b64028db0c4b17ec420df80868915a25efc9",
-        "version" : "0.10.0"
+        "branch" : "main",
+        "revision" : "78a653d61b8e4175c367b1a11120088135085bca"
       }
     },
     {

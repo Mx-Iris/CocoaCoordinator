@@ -5,7 +5,7 @@
 //
 
 
-public protocol Coordinating: Router, TransitionPerformer {
+public protocol Coordinating<Route, Transition>: Router, TransitionPerformer {
     var identifer: String { get }
     var parent: (any Coordinating)? { get }
     var children: [any Coordinating] { get }
@@ -14,13 +14,13 @@ public protocol Coordinating: Router, TransitionPerformer {
     func removeAllChild<T>(with type: T.Type)
     func removeAllChild()
     func removeFromParent()
-    func registerParent(_ coordinator: any Coordinating & AnyObject)
+    func registerParent(_ coordinator: any Coordinating)
     func prepareTransition(for route: Route) -> Transition
     func completeTransition(for route: Route)
 }
 
 
-public protocol TransitionPerformer {
+public protocol TransitionPerformer<Transition> {
     /// The type of transitions that can be executed on the rootViewController.
     associatedtype Transition: TransitionProtocol
 

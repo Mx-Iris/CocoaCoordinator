@@ -1,25 +1,33 @@
-import Foundation
+import AppKit
+import OSLog
 
-open class Coordinator<Route: Routable, Transition: TransitionProtocol>: Coordinating {
+private let logger = Logger(subsystem: "com.MxIris.CocoaCoordinator", category: "Coordinator")
+
+open class Coordinator<Route: Routable, Transition: TransitionProtocol>: NSResponder, Coordinating {
     public private(set) weak var parent: (any Coordinating)?
 
     public private(set) var children: [any Coordinating] = []
 
     package var didCompleteTransition: (Route) -> Void = { _ in }
-    
+
     public var identifer: String {
         String(describing: Self.self)
     }
 
     public init(initialRoute: Route?) {
-//        super.init()
+        super.init()
         initialRoute.map { prepareTransition(for: $0) }.map { performTransition($0) }
         initialRoute.map { completeTransition(for: $0) }
     }
 
     public init(initialTranstion: Transition?) {
-//        super.init()
+        super.init()
         initialTranstion.map { performTransition($0) }
+    }
+
+    @available(*, unavailable)
+    public required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     public func removeFromParent() {
@@ -31,7 +39,7 @@ open class Coordinator<Route: Routable, Transition: TransitionProtocol>: Coordin
         coordinator.registerParent(self)
     }
 
-    public func registerParent(_ coordinator: any Coordinating & AnyObject) {
+    public func registerParent(_ coordinator: any Coordinating) {
         parent = coordinator
     }
 
@@ -41,7 +49,7 @@ open class Coordinator<Route: Routable, Transition: TransitionProtocol>: Coordin
             child.removeAllChild()
             children.remove(at: index)
         } else {
-            print("Couldn't remove coordinator: \(coordinator). It's not a child coordinator.")
+            logger.warning("Couldn't remove coordinator: \(String(describing: coordinator)). It's not a child coordinator.")
         }
     }
 
@@ -59,7 +67,7 @@ open class Coordinator<Route: Routable, Transition: TransitionProtocol>: Coordin
     }
 
     deinit {
-        debugPrint("Deinit 📣: \(String(describing: self))")
+        logger.debug("Deinit 📣: \(String(describing: self))")
     }
 
     open func contextTrigger(_ route: Route, with options: TransitionOptions = .default, completion: ContextPresentationHandler? = nil) {
@@ -76,7 +84,7 @@ open class Coordinator<Route: Routable, Transition: TransitionProtocol>: Coordin
     }
 
     open func performTransition(_ transition: Transition, with options: TransitionOptions = .default, completion: PresentationHandler? = nil) {
-        transition.perform(on: nil, in: nil, with: options) { 
+        transition.perform(on: nil, in: nil, with: options) {
             completion?()
         }
     }
