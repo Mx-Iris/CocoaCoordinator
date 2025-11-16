@@ -2,10 +2,10 @@
 
 import AppKit
 
-extension Transition where V: NSSplitViewController {
+extension Transition where ViewController: NSSplitViewController {
     public static func set(_ presentables: [Presentable]) -> Self {
         Self(presentables: presentables) { windowController, viewController, options, completion in
-            guard let splitViewController = viewController ?? ((windowController as? NSWindowController)?.contentViewController as? V) else {
+            guard let splitViewController = viewController ?? ((windowController as? NSWindowController)?.contentViewController as? ViewController) else {
                 completion?()
                 return
             }
@@ -14,10 +14,9 @@ extension Transition where V: NSSplitViewController {
         }
     }
 
-    @available(macOS 11, *)
     public static func set(sidebar: Presentable, content: Presentable, inspector: Presentable) -> Self {
         Self(presentables: [sidebar, content, inspector]) { windowController, viewController, options, completion in
-            guard let splitViewController = viewController ?? ((windowController as? NSWindowController)?.contentViewController as? V) else {
+            guard let splitViewController = viewController ?? ((windowController as? NSWindowController)?.contentViewController as? ViewController) else {
                 completion?()
                 return
             }
@@ -36,10 +35,10 @@ extension Transition where V: NSSplitViewController {
     }
 }
 
-extension Transition where V: NSTabViewController {
+extension Transition where ViewController: NSTabViewController {
     public static func set(_ presentables: [Presentable]) -> Self {
         Self(presentables: presentables) { windowController, viewController, options, completion in
-            guard let viewController = viewController ?? ((windowController as? NSWindowController)?.contentViewController as? V) else {
+            guard let viewController = viewController ?? ((windowController as? NSWindowController)?.contentViewController as? ViewController) else {
                 completion?()
                 return
             }
@@ -50,7 +49,7 @@ extension Transition where V: NSTabViewController {
     }
 }
 
-extension Transition where V: NSViewController {
+extension Transition where ViewController: NSViewController {
     public static func presentOnRoot(_ presentable: Presentable, mode: NSViewController.PresentationMode) -> Self {
         Self(presentables: [presentable]) { _, vc, _, completion in
             vc?.present(onRoot: true, presentable.viewController, mode: mode) {
@@ -78,7 +77,7 @@ extension Transition where V: NSViewController {
     }
 }
 
-extension Transition where W: NSWindowController {
+extension Transition where WindowController: NSWindowController {
     public static func show() -> Self {
         Self(presentables: []) { wc, _, _, completion in
             wc?.showWindow(nil)
@@ -186,6 +185,22 @@ extension Transition {
 
     public static func route<C: Coordinating>(on coordinator: C, to route: C.Route) -> Self {
         self.route(route, on: coordinator)
+    }
+
+    public static func trigger<Route: Routable>(_ route: Route, on router: any Router<Route>) -> Self {
+        Transition(presentables: []) { _, _, options, completion in
+            router.trigger(route, with: options, completion: completion)
+        }
+    }
+
+    public static func perform<TransitionType: TransitionProtocol>(
+        _ transition: TransitionType,
+        on windowController: TransitionType.WindowController,
+        in viewController: TransitionType.ViewController,
+    ) -> Transition {
+        Transition(presentables: transition.presentables) { _, _, options, completion in
+            transition.perform(on: windowController, in: viewController, with: options, completion: completion)
+        }
     }
 }
 

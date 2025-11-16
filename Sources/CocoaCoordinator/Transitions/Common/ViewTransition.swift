@@ -2,7 +2,7 @@
 
 import AppKit
 
-public typealias ViewTransition<V: NSViewController> = Transition<Void, V>
+public typealias ViewTransition<ViewController: NSViewController> = Transition<Void, ViewController>
 
 public typealias BasicViewTransition = ViewTransition<NSViewController>
 

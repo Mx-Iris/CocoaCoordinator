@@ -1,3 +1,5 @@
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
+
 import AppKit
 
 public protocol Presentable {
@@ -140,3 +142,5 @@ extension NSViewController {
         return window.contentViewController === self
     }
 }
+
+#endif

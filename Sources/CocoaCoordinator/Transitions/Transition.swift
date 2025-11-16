@@ -1,9 +1,9 @@
 import AppKit
 
-public struct Transition<W, V>: TransitionProtocol {
+public struct Transition<WindowController, ViewController>: TransitionProtocol {
     public typealias PerformClosure = (
-        _ windowController: W?,
-        _ viewController: V?,
+        _ windowController: WindowController?,
+        _ viewController: ViewController?,
         _ options: TransitionOptions,
         _ completion: PresentationHandler?
     ) -> Void
@@ -23,7 +23,7 @@ public struct Transition<W, V>: TransitionProtocol {
         self._perform = perform
     }
 
-    public func perform(on windowController: W?, in viewController: V?, with options: TransitionOptions, completion: PresentationHandler?) {
+    public func perform(on windowController: WindowController?, in viewController: ViewController?, with options: TransitionOptions, completion: PresentationHandler?) {
         autoreleasepool {
             _perform(windowController, viewController, options, completion)
         }

@@ -10,20 +10,6 @@ public protocol Router<Route>: AnyObject {
 }
 
 extension Router {
-    @available(*, deprecated, message: "use any Router<Route>")
-    public var strongRouter: StrongRouter<Route> {
-        return StrongRouter(self)
-    }
-}
-
-extension Router {
-    @available(*, deprecated, message: "use unowned let router: any Router<Route>")
-    public var unownedRouter: UnownedRouter<Route> {
-        return UnownedRouter(self) { $0.strongRouter }
-    }
-}
-
-extension Router {
     public func trigger(_ route: Route) {
         trigger(route, with: .default, completion: nil)
     }
@@ -70,30 +56,4 @@ extension Router {
     }
 }
 
-extension Router where Self: Presentable {
-    // MARK: Computed properties
-
-    ///
-    /// Creates a StrongRouter object from the given router to abstract from concrete implementations
-    /// while maintaining information necessary to fulfill the Router protocol.
-    /// The original router will be held strongly.
-    ///
-//    public var strongRouter: StrongRouter<Route> {
-//        return StrongRouter(self)
-//    }
-
-    ///
-    /// Returns a router for the specified route, if possible.
-    ///
-    /// - Parameter route:
-    ///     The route type to return a router for.
-    ///
-    /// - Returns:
-    ///     It returns the router's strongRouter,
-    ///     if it is compatible with the given route type,
-    ///     otherwise `nil`.
-    ///
-//    public func router<R: Routable>(for route: R) -> (any Router<R>)? {
-//        return self
-//    }
-}
+extension Router where Self: Presentable {}

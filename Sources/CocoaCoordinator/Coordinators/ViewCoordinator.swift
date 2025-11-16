@@ -1,14 +1,14 @@
 import AppKit
 
-open class ViewCoordinator<Route: Routable, Transition: TransitionProtocol>: Coordinator<Route, Transition>, Presentable where Transition.V: NSViewController {
-    public var rootViewController: Transition.V
+open class ViewCoordinator<Route: Routable, Transition: TransitionProtocol>: Coordinator<Route, Transition>, Presentable where Transition.ViewController: NSViewController {
+    public var rootViewController: Transition.ViewController
 
-    public init(rootViewController: Transition.V, initialRoute: Route?) {
+    public init(rootViewController: Transition.ViewController, initialRoute: Route?) {
         self.rootViewController = rootViewController
         super.init(initialRoute: initialRoute)
     }
 
-    public init(rootViewController: Transition.V, initialTranstion: Transition?) {
+    public init(rootViewController: Transition.ViewController, initialTranstion: Transition?) {
         self.rootViewController = rootViewController
         super.init(initialTranstion: initialTranstion)
     }

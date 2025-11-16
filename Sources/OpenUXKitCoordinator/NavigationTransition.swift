@@ -14,7 +14,7 @@ import UXKit
 
 private let logger = Logger(subsystem: "com.JH.OpenUXKitCoordinator", category: "Transition")
 
-extension Transition where V: UXNavigationController {
+extension Transition where ViewController: UXNavigationController {
     public static func push(_ presentable: Presentable, animated: Bool) -> Self {
         Self(presentables: [presentable]) { windowController, viewController, options, completion in
             if let uxViewController = presentable.viewController as? UXViewController {

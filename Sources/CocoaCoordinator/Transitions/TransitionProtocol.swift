@@ -3,9 +3,9 @@
 import AppKit
 
 public protocol TransitionProtocol: TransitionContext {
-    associatedtype W
-    associatedtype V
-    func perform(on windowController: W?, in viewController: V?, with options: TransitionOptions, completion: PresentationHandler?)
+    associatedtype WindowController
+    associatedtype ViewController
+    func perform(on windowController: WindowController?, in viewController: ViewController?, with options: TransitionOptions, completion: PresentationHandler?)
     static func multiple(_ transitions: [Self]) -> Self
 }
 
