@@ -14,9 +14,16 @@ open class SceneCoordinator<Route: Routable, Transition: TransitionProtocol>: Co
     }
 
     open override func performTransition(_ transition: Transition, with options: TransitionOptions = .default, completion: PresentationHandler? = nil) {
+        setupNextResponder()
         transition.presentables.compactMap { $0 as? (any Coordinating) }.forEach(addChild(_:))
         transition.perform(on: windowController, in: windowController.contentViewController as? Transition.V, with: options) {
             completion?()
         }
+    }
+    
+    open func setupNextResponder() {
+        let originalNextResponder = windowController.nextResponder
+        nextResponder = originalNextResponder
+        windowController.nextResponder = self
     }
 }
