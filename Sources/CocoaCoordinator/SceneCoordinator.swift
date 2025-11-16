@@ -23,7 +23,9 @@ open class SceneCoordinator<Route: Routable, Transition: TransitionProtocol>: Co
     
     open func setupNextResponder() {
         let originalNextResponder = windowController.nextResponder
-        nextResponder = originalNextResponder
+        if originalNextResponder != self {
+            nextResponder = originalNextResponder
+        }
         windowController.nextResponder = self
     }
 }

@@ -31,7 +31,9 @@ open class ViewCoordinator<Route: Routable, Transition: TransitionProtocol>: Coo
 
     open func setupNextResponder() {
         let originalNextResponder = rootViewController.nextResponder
-        nextResponder = originalNextResponder
+        if originalNextResponder != self {
+            nextResponder = originalNextResponder
+        }
         rootViewController.nextResponder = self
     }
 }
