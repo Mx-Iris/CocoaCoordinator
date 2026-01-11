@@ -6,7 +6,7 @@ public protocol Presentable {
     ///
     /// The viewController of the Presentable.
     ///
-    /// In the case of a `UIViewController`, it returns itself.
+    /// In the case of a `NSViewController`, it returns itself.
     /// A coordinator returns its rootViewController.
     ///
     var viewController: NSViewController? { get }
@@ -31,7 +31,7 @@ public protocol Presentable {
     ///     This could be a window, another viewController, a coordinator, etc.
     ///     `nil` is specified whenever a context cannot be easily determined.
     ///
-    func presented(from presentable: Presentable?)
+    func presented(from presentable: (any Presentable)?)
 
     ///
     /// This method is used to register a parent coordinator to a child coordinator.
@@ -39,7 +39,7 @@ public protocol Presentable {
     /// - Note:
     ///     This method is used internally and should never be called directly.
     ///
-    func registerParent(_ presentable: Presentable & AnyObject)
+    func registerParent(_ presentable: any Presentable & AnyObject)
 
     ///
     /// This method gets called when the transition of a child coordinator is being reported to its parent.
@@ -62,14 +62,21 @@ public protocol Presentable {
 }
 
 extension Presentable {
-    public func registerParent(_ presentable: Presentable & AnyObject) {}
+    public func registerParent(_ presentable: any Presentable & AnyObject) {}
 
     public func childTransitionCompleted() {}
 
     public func setRoot(for window: NSWindow) {
+        let previousRoot = window.contentViewController
         window.contentViewController = viewController
         window.makeKeyAndOrderFront(nil)
         presented(from: window)
+        
+        if let previousRoot {
+            previousRoot.removeFromParent()
+            previousRoot.dismiss(nil)
+            previousRoot.viewIfLoaded?.removeFromSuperview()
+        }
     }
 
 //    public func router<R: Routable>(for route: R) -> StrongRouter<R>? {
@@ -77,6 +84,8 @@ extension Presentable {
 //    }
 
     public func presented(from presentable: Presentable?) {}
+    
+    public var asPresentable: any Presentable { self }
 }
 
 extension NSViewController: Presentable {
@@ -140,6 +149,13 @@ extension NSViewController {
     func isInViewHierarchy(on window: NSWindow?) -> Bool {
         guard let window else { return false }
         return window.contentViewController === self
+    }
+}
+
+extension NSViewController {
+    @inlinable
+    var viewIfLoaded: NSView? {
+        isViewLoaded ? view : nil
     }
 }
 

@@ -27,7 +27,32 @@ extension Transition where ViewController: NSSplitViewController {
             }
             splitViewController.splitViewItems = [
                 .init(sidebarWithViewController: sidebarViewController),
-                .init(contentListWithViewController: contentViewController),
+                .init(viewController: contentViewController),
+                .init(inspectorWithViewController: inspectorViewController),
+            ]
+            completion?()
+        }
+    }
+    
+    public static func set(sidebar: Presentable, contentList: Presentable, editor: Presentable, inspector: Presentable) -> Self {
+        Self(presentables: [sidebar, contentList, editor, inspector]) { windowController, viewController, options, completion in
+            guard let splitViewController = viewController ?? ((windowController as? NSWindowController)?.contentViewController as? ViewController) else {
+                completion?()
+                return
+            }
+
+            guard let sidebarViewController = sidebar.viewController,
+                  let contentListViewController = contentList.viewController,
+                  let editorViewController = editor.viewController,
+                  let inspectorViewController = inspector.viewController
+            else {
+                completion?()
+                return
+            }
+            splitViewController.splitViewItems = [
+                .init(sidebarWithViewController: sidebarViewController),
+                .init(contentListWithViewController: contentListViewController),
+                .init(viewController: editorViewController),
                 .init(inspectorWithViewController: inspectorViewController),
             ]
             completion?()
@@ -36,6 +61,14 @@ extension Transition where ViewController: NSSplitViewController {
 }
 
 extension Transition where ViewController: NSTabViewController {
+    
+    public static func select(index: Int) -> Self {
+        Self(presentables: []) { windowController, viewController, options, completion in
+            viewController?.selectedTabViewItemIndex = index
+            completion?()
+        }
+    }
+    
     public static func set(_ presentables: [Presentable]) -> Self {
         Self(presentables: presentables) { windowController, viewController, options, completion in
             guard let viewController = viewController ?? ((windowController as? NSWindowController)?.contentViewController as? ViewController) else {

@@ -18,9 +18,11 @@
 /// e.g. when you are presenting, pushing, or otherwise displaying it.
 ///
 
+#if os(macOS)
 
-open class RedirectionRouter<ParentRoute: Routable, Route: Routable>: Router {
+import AppKit
 
+open class RedirectionRouter<ParentRoute: Routable, Route: Routable>: Router, Presentable {
     // MARK: Stored properties
 
     /// A type-erased Router object of the parent router.
@@ -34,7 +36,7 @@ open class RedirectionRouter<ParentRoute: Routable, Route: Routable>: Router {
     /// The viewController used in transitions, e.g. when pushing, presenting
     /// or otherwise displaying the RedirectionRouter.
     ///
-//    public private(set) var viewController: UIViewController!
+    public private(set) var viewController: NSViewController?
 
     // MARK: Initialization
 
@@ -54,8 +56,12 @@ open class RedirectionRouter<ParentRoute: Routable, Route: Routable>: Router {
     ///     - map:
     ///         A mapping from this RedirectionRouter's routes to the parent's routes.
     ///
-    public init(parent: any Router<ParentRoute>,
-                map: ((Route) -> ParentRoute)?) {
+    public init(
+        viewController: NSViewController,
+        parent: any Router<ParentRoute>,
+        map: ((Route) -> ParentRoute)?
+    ) {
+        self.viewController = viewController
         self.parent = parent
         self._map = map
     }
@@ -68,6 +74,10 @@ open class RedirectionRouter<ParentRoute: Routable, Route: Routable>: Router {
         parent.contextTrigger(mapToParentRoute(route), with: options, completion: completion)
     }
 
+    public func router<R: Routable>(for route: R) -> (any Router<R>)? {
+        self as? RedirectionRouter<ParentRoute, R>
+    }
+    
     ///
     /// Map RouteType to ParentRoute.
     ///
@@ -87,3 +97,6 @@ open class RedirectionRouter<ParentRoute: Routable, Route: Routable>: Router {
         return map(route)
     }
 }
+
+
+#endif

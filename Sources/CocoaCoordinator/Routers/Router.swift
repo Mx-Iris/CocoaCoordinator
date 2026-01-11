@@ -6,6 +6,7 @@ import Foundation
 
 public protocol Router<Route>: AnyObject {
     associatedtype Route: Routable
+    
     func contextTrigger(_ route: Route, with options: TransitionOptions, completion: ContextPresentationHandler?)
 }
 
