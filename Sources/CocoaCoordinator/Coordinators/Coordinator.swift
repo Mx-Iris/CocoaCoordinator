@@ -66,10 +66,6 @@ open class Coordinator<Route: Routable, Transition: TransitionProtocol>: NSRespo
         children.removeAll { $0.canBeRemovedAsChild() }
     }
 
-    deinit {
-        logger.debug("Deinit 📣: \(String(describing: self))")
-    }
-
     open func contextTrigger(_ route: Route, with options: TransitionOptions = .default, completion: ContextPresentationHandler? = nil) {
         let transition = prepareTransition(for: route)
         performTransition(transition, with: options) { [weak self] in
