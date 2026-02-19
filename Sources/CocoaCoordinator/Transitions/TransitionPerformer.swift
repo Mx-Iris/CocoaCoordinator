@@ -1,3 +1,4 @@
+@MainActor
 public protocol TransitionPerformer<Transition> {
     /// The type of transitions that can be executed on the rootViewController.
     associatedtype Transition: TransitionProtocol

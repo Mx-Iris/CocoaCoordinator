@@ -3,6 +3,7 @@ import OSLog
 
 private let logger = Logger(subsystem: "com.MxIris.CocoaCoordinator", category: "Coordinator")
 
+@MainActor
 open class Coordinator<Route: Routable, Transition: TransitionProtocol>: NSResponder, Coordinating {
     public private(set) weak var parent: (any Coordinating)?
 

@@ -22,6 +22,7 @@
 
 import AppKit
 
+@MainActor
 open class RedirectionRouter<ParentRoute: Routable, Route: Routable>: Router, Presentable {
     // MARK: Stored properties
 

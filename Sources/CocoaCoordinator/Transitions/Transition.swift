@@ -1,7 +1,8 @@
 import AppKit
 
+@MainActor
 public struct Transition<WindowController, ViewController>: TransitionProtocol {
-    public typealias PerformClosure = (
+    public typealias PerformClosure = @MainActor @Sendable (
         _ windowController: WindowController?,
         _ viewController: ViewController?,
         _ options: TransitionOptions,
@@ -10,9 +11,9 @@ public struct Transition<WindowController, ViewController>: TransitionProtocol {
 
     // MARK: Stored properties
 
-    private var _perform: PerformClosure
+    private let _perform: PerformClosure
 
-    private var _presentables: [Presentable]
+    private let _presentables: [Presentable]
 
     public var presentables: [Presentable] {
         return _presentables

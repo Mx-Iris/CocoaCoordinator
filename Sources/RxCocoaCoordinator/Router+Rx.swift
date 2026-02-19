@@ -3,6 +3,7 @@ import RxCocoa
 import CocoaCoordinator
 import Foundation
 
+@MainActor
 public struct ReactiveRouter<Route: Routable> {
     // MARK: Stored Properties
 
@@ -26,29 +27,34 @@ extension Router {
 extension ReactiveRouter {
     public func trigger() -> AnyObserver<Route> {
         AnyObserver<Route> { [weak base] event in
-            guard let base else { return }
-            switch event {
-            case let .next(route):
-                base.trigger(route)
-            default:
-                break
+            Task { @MainActor in
+                guard let base else { return }
+                switch event {
+                case let .next(route):
+                    base.trigger(route)
+                default:
+                    break
+                }
             }
         }
     }
 
     public func trigger(_ route: Route) -> AnyObserver<Void> {
         AnyObserver<Void> { [weak base] event in
-            guard let base else { return }
-            switch event {
-            case .next:
-                base.trigger(route)
-            default:
-                break
+            Task { @MainActor in
+                guard let base else { return }
+                switch event {
+                case .next:
+                    base.trigger(route)
+                default:
+                    break
+                }
             }
         }
     }
 }
 
+@MainActor
 public struct ReactiveCoordinator<Route: Routable, Transition: TransitionProtocol> {
     public let base: Coordinator<Route, Transition>
 
@@ -69,7 +75,9 @@ extension Coordinator {
             return relay
         }
         let relay = PublishRelay<Route>()
+        let prevCompleteTransition = didCompleteTransition
         didCompleteTransition = {
+            prevCompleteTransition($0)
             relay.accept($0)
         }
         objc_setAssociatedObject(self, #function, relay, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)

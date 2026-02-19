@@ -144,11 +144,23 @@ extension Transition where WindowController: NSWindowController {
             }
         }
     }
+    
+    public static func beginSheet<Route: Routable, Transition: TransitionProtocol>(_ sceneCoordinator: SceneCoordinator<Route, Transition>) -> Self {
+        Self(presentables: []) { wc, _, _, completion in
+            if let window = sceneCoordinator.windowController.window {
+                wc?.window?.beginSheet(window) { _ in
+                    completion?()
+                }
+            } else {
+                completion?()
+            }
+        }
+    }
 
     public static func endSheetOnTop() -> Self {
-        Self(presentables: []) { wc, _, _, completion in
-            guard let attachedSheet = wc?.window?.attachedSheet else { return }
-            wc?.window?.endSheet(attachedSheet)
+        Self(presentables: []) { windowController, _, _, completion in
+            guard let currentWindow = windowController?.window, let sheetParentWindow = currentWindow.sheetParent else { return }
+            sheetParentWindow.endSheet(currentWindow)
             completion?()
         }
     }

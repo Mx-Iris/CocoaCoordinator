@@ -4,7 +4,7 @@
 // It requires an object to be able to add, remove its child and can be removed themselves from parent like `removeFromSuperview`.
 //
 
-
+@MainActor
 public protocol Coordinating<Route, Transition>: Router, TransitionPerformer {
     var identifer: String { get }
     var parent: (any Coordinating)? { get }

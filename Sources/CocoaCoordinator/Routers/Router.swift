@@ -4,6 +4,7 @@ import Foundation
 // `Router` is used to abstract the transition-type that can be able to perform route from its `Coordinator`.
 //
 
+@MainActor
 public protocol Router<Route>: AnyObject {
     associatedtype Route: Routable
     
